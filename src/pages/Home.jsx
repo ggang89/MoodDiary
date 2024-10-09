@@ -1,9 +1,14 @@
-import { useSearchParams } from "react-router-dom";
-
+import Header from "../components/Header"
+import Button from "../components/Button"
+import DiaryList from "../components/DiaryList";
 export default function Home() {
-  const [params, setParams] = useSearchParams();
-  //주소설정: localhost:5173/?value=hello
-  console.log(params.get("value")); //hello 출력
-
-  return <div>home</div>;
+ 
+  return (
+    <>
+      <Header title={"2024년 2월"}
+        leftChild={<Button text={"<"} />}
+        rightChild={<Button text={">"} />} />
+      <DiaryList/>
+    </>
+  );
 }
