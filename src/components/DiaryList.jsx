@@ -22,10 +22,11 @@ export default function DiaryList({ data }) {
     });
   };
   const sortedData = getSortedData();
+  
   return (
     <div className="DiaryList">
       <div className="menu_bar">
-        <select onChange={onChangeSortType}>
+        <select value={sortType } onChange={onChangeSortType}>
           <option value={"latest"}>최신순</option>
           <option value={"oldest"}>오래된 순</option>
         </select>
