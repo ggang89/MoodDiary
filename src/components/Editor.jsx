@@ -62,7 +62,7 @@ export default function Editor() {
       [name]: value,
     });
   };
-  const emotionId = 5;
+ 
 
   return (
     <div className="Editor">
@@ -80,9 +80,17 @@ export default function Editor() {
         <div className="emotion_list_wrapper">
           {emotionList.map((item) => (
             <EmotionItem
+              onClick={() =>
+                onChangeInput({
+                  target: {
+                    name: "emotionId",
+                    value: item.emotionId,
+                  },
+                })
+              }
               key={item.emotionId}
               {...item}
-              isSelected={item.emotionId === emotionId}
+              isSelected={item.emotionId === input.emotionId}
             />
           ))}
         </div>
