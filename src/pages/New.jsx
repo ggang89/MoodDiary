@@ -11,6 +11,10 @@ export default function New() {
 
   const onSubmit = (input) => {
     onCreate(input.createdDate.getTime(), input.emotionId, input.content);
+    
+    //홈으로 이동 + 뒤로가기 방지
+    nav("/", { replace: true })
+    
   };
 
   return (
