@@ -42,7 +42,7 @@ const getStringedDate = (targetDate) => {
   return `${year}-${month}-${date}`;
 };
 
-export default function Editor() {
+export default function Editor({onSubmit}) {
   const [input, setInput] = useState({
     createdDate: new Date(),
     emotionId: 3,
@@ -62,8 +62,9 @@ export default function Editor() {
       [name]: value,
     });
   };
- 
-
+  const onClickSubmitButton = () => {
+    onSubmit(input);
+  };
   return (
     <div className="Editor">
       <section className="date_section">
@@ -97,11 +98,16 @@ export default function Editor() {
       </section>
       <section className="content_section">
         <h4>오늘의 일기</h4>
-        <textarea placeholder="오늘은 어땠나요?" />
+        <textarea
+          name="content"
+          value={input.content}
+          onChange={onChangeInput}
+          placeholder="오늘은 어땠나요?"
+        />
       </section>
       <section className="button_section">
         <Button text={"취소하기"} />
-        <Button text={"작성완료"} type={"POSITIVE"} />
+        <Button onClick={onClickSubmitButton } text={"작성완료"} type={"POSITIVE"} />
       </section>
     </div>
   );
