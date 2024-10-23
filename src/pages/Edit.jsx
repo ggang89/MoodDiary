@@ -44,7 +44,7 @@ export default function Edit() {
           <Button onClick={onClickDelete} text={"삭제하기"} type={"NEGATIVE"} />
         }
       />
-      <Editor />
+      <Editor initData={curDiaryItem } />
     </>
   );
 }
