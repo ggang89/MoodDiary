@@ -8,7 +8,7 @@ import { DiaryDispatchContext, DiaryStateContext } from "../App";
 export default function Edit() {
   const { id } = useParams();
   const nav = useNavigate();
-  const { onDelete } = useContext(DiaryDispatchContext);
+  const { onDelete, onUpdate } = useContext(DiaryDispatchContext);
   const data = useContext(DiaryStateContext);
   const [curDiaryItem, setCurDiaryItem] = useState();
 
@@ -35,6 +35,13 @@ export default function Edit() {
     }
   };
 
+  const onSubmit = (input) => {
+    if (window.confirm("일기를 수정하시겠습니까?")) {
+      onUpdate(id, input.createdDate.getTime(), input.emotionId, input.content); //순서중요
+      nav("/", { replace: true });
+    }
+  };
+
   return (
     <>
       <Header
@@ -44,7 +51,7 @@ export default function Edit() {
           <Button onClick={onClickDelete} text={"삭제하기"} type={"NEGATIVE"} />
         }
       />
-      <Editor initData={curDiaryItem } />
+      <Editor initData={curDiaryItem} onSubmit={onSubmit} />
     </>
   );
 }
