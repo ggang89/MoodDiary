@@ -3,12 +3,13 @@ import Header from "../components/Header";
 import Button from "../components/Button";
 import Editor from "../components/Editor";
 import { useContext } from "react";
-import { DiaryDispatchContext } from "../App";
+import { DiaryDispatchContext, DiaryStateContext } from "../App";
 
 export default function Edit() {
   const { id } = useParams();
   const nav = useNavigate();
   const { onDelete } = useContext(DiaryDispatchContext);
+  const data = useContext(DiaryStateContext);
 
   const onClickDelete = () => {
     if (window.confirm("일기를 정말 삭제할까요? 다시 복구되지 않습니다!")) {
@@ -17,7 +18,23 @@ export default function Edit() {
       nav("/", { replace: true });
     }
   };
+  const getCurretDiaryItem = () => {
+    const currentDiaryItem = data.find(
+    //모든 item중에서 id가 일치하는 data를 찾음
+      (item) => String(item.id) === String(id)
+    );
+    //id가 일치하는 일기가 없을 때 => 존재하지 않는 페이지에 들어간 것!
+    if (!currentDiaryItem) {
+      //경고메시지 보여주고 홈페이지로 이동시키기
+      window.alert("존재하지 않는 일기입니다.");
+      nav("/", { replace: true });
+    }
+    //찾는 아이디의 페이지가 있는 경우
+    return currentDiaryItem;
+  };
 
+  const currentDiaryItem = getCurretDiaryItem();
+ console.log(currentDiaryItem)
   return (
     <>
       <Header
