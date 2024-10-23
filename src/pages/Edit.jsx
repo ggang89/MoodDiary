@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Button from "../components/Button";
 import Editor from "../components/Editor";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DiaryDispatchContext, DiaryStateContext } from "../App";
 
 export default function Edit() {
@@ -10,17 +10,11 @@ export default function Edit() {
   const nav = useNavigate();
   const { onDelete } = useContext(DiaryDispatchContext);
   const data = useContext(DiaryStateContext);
+  const [curDiaryItem, setCurDiaryItem] = useState();
 
-  const onClickDelete = () => {
-    if (window.confirm("일기를 정말 삭제할까요? 다시 복구되지 않습니다!")) {
-      //일기 삭제하기
-      onDelete(id);
-      nav("/", { replace: true });
-    }
-  };
-  const getCurretDiaryItem = () => {
+  useEffect(() => {
     const currentDiaryItem = data.find(
-    //모든 item중에서 id가 일치하는 data를 찾음
+      //모든 item중에서 id가 일치하는 data를 찾음
       (item) => String(item.id) === String(id)
     );
     //id가 일치하는 일기가 없을 때 => 존재하지 않는 페이지에 들어간 것!
@@ -30,11 +24,17 @@ export default function Edit() {
       nav("/", { replace: true });
     }
     //찾는 아이디의 페이지가 있는 경우
-    return currentDiaryItem;
+    setCurDiaryItem(currentDiaryItem);
+  }, [data, id]);
+
+  const onClickDelete = () => {
+    if (window.confirm("일기를 정말 삭제할까요? 다시 복구되지 않습니다!")) {
+      //일기 삭제하기
+      onDelete(id);
+      nav("/", { replace: true });
+    }
   };
 
-  const currentDiaryItem = getCurretDiaryItem();
- console.log(currentDiaryItem)
   return (
     <>
       <Header
