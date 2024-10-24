@@ -49,6 +49,23 @@ function App() {
   const [data, dispatch] = useReducer(reducer, mockData);
   const idRef = useRef(3); //3번부터 시작하도록
 
+  //로컬 스토리지에 데이터 저장하기
+  localStorage.setItem("test", "hi");
+  localStorage.setItem("person", { name: "ss" }); //[object]로 저장됨
+  //객체타입값은 문자열로 변환해서 넣어줘야함
+  localStorage.setItem("person2", JSON.stringify({ name: "sy" })); //{name:"sy"}형식으로 저장됨
+
+
+  //로컬 스토리지에서 데이터 불러오기
+  console.log(localStorage.getItem("test"));
+  //문자열로 저장된 객체값을 다시 객체로 변화해서 불러와야함
+  console.log(JSON.parse((localStorage.getItem("person2"))));
+
+//  JSON.parse(undefined) =>인수로 전달한게 undefined면 오류 발생함
+
+  //로컬 스토리지 데이터 삭제하기
+ localStorage.removeItem("person") 
+  
   //새로운 일기 추가
   const onCreate = (createdDate, emotionId, content) => {
     dispatch({
