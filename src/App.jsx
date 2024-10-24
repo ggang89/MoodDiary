@@ -1,4 +1,4 @@
-import { useReducer, useRef, createContext } from "react";
+import { useReducer, useRef, createContext, useEffect, useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import New from "./pages/New";
@@ -6,66 +6,76 @@ import Diary from "./pages/Diary";
 import Edit from "./pages/Edit";
 import "./App.css";
 
-const mockData = [
-  {
-    id: 1,
-    createdDate: new Date("2024-10-20").getTime(),
-    emotionId: 1,
-    content: "1번 일기 내용",
-  },
-  {
-    id: 2,
-    createdDate: new Date("2024-10-19").getTime(),
-    emotionId: 2,
-    content: "2번 일기 내용",
-  },
-  {
-    id: 3,
-    createdDate: new Date("2024-09-19").getTime(),
-    emotionId: 3,
-    content: "3번 일기 내용",
-  },
-];
-
 function reducer(state, action) {
+  let nextState;
+
   switch (action.type) {
-    case "CREATE":
-      return [action.data, ...state];
-    case "UPDATE":
-      return state.map((item) =>
+    case "INIT":
+      //INIT값 자체가 locolStrage에서 불러온 값이므로 다시 nextState에 저장할 필요 없다
+      return action.data;
+
+    case "CREATE": {
+      nextState = [action.data, ...state];
+      break;
+    }
+    case "UPDATE": {
+      nextState = state.map((item) =>
         String(item.id) === String(action.data.id) ? action.data : item
       );
-    case "DELETE":
-      return state.filter((item) => String(item.id) !== String(action.id));
+      break;
+    }
+    case "DELETE": {
+      nextState = state.filter((item) => String(item.id) !== String(action.id));
+      break;
+    }
     default:
       return state;
   }
+
+  localStorage.setItem("diary", JSON.stringify(nextState));
+  return nextState;
 }
 
 export const DiaryStateContext = createContext();
 export const DiaryDispatchContext = createContext();
 
 function App() {
-  const [data, dispatch] = useReducer(reducer, mockData);
-  const idRef = useRef(3); //3번부터 시작하도록
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, dispatch] = useReducer(reducer, []);
+  const idRef = useRef(0);
 
-  //로컬 스토리지에 데이터 저장하기
-  localStorage.setItem("test", "hi");
-  localStorage.setItem("person", { name: "ss" }); //[object]로 저장됨
-  //객체타입값은 문자열로 변환해서 넣어줘야함
-  localStorage.setItem("person2", JSON.stringify({ name: "sy" })); //{name:"sy"}형식으로 저장됨
+  useEffect(() => {
+    const storedData = localStorage.getItem("diary");
 
+    //값이 없으면 함수 바로 종료시키기,아니면 오류 발생함
+    if (!storedData) {
+      setIsLoading(false);
+      return;
+    }
 
-  //로컬 스토리지에서 데이터 불러오기
-  console.log(localStorage.getItem("test"));
-  //문자열로 저장된 객체값을 다시 객체로 변화해서 불러와야함
-  console.log(JSON.parse((localStorage.getItem("person2"))));
+    const parsedData = JSON.parse(storedData);
+    //배열이 아니면 함수종료
+    if (!Array.isArray(parsedData)) {
+      setIsLoading(false);
+      return;
+    }
+    let maxId = 0;
+    parsedData.forEach((item) => {
+      if (Number(item.id) > maxId) {
+        maxId = Number(item.id);
+      }
+    })
 
-//  JSON.parse(undefined) =>인수로 전달한게 undefined면 오류 발생함
+    idRef.current = maxId + 1;
 
-  //로컬 스토리지 데이터 삭제하기
- localStorage.removeItem("person") 
-  
+    dispatch({
+      type: "INIT",
+      data: parsedData,
+    });
+    setIsLoading(false);
+  }, []);
+  //렌더링시 1번만 마운트 되도록 빈배열로 설정함
+
   //새로운 일기 추가
   const onCreate = (createdDate, emotionId, content) => {
     dispatch({
@@ -98,6 +108,10 @@ function App() {
       id,
     });
   };
+
+  if (isLoading) {
+    return <div>데이터 중입니다....</div>
+  }
   return (
     <>
       <DiaryStateContext.Provider value={data}>
