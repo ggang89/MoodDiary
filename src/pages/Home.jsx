@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Button from "../components/Button";
 import DiaryList from "../components/DiaryList";
 import { DiaryStateContext } from "../App";
+import usePageTitle from "../hooks/usePageTitle";
 
 const getMonthlyData = (pivotDate, data) => {
   const beginTime = new Date(
@@ -24,16 +25,16 @@ const getMonthlyData = (pivotDate, data) => {
   ).getTime();
 
   return data.filter(
-    (item) =>
-      beginTime <= item.createdDate && item.createdDate <= endTime
+    (item) => beginTime <= item.createdDate && item.createdDate <= endTime
   );
-  
 };
 
 export default function Home() {
   const data = useContext(DiaryStateContext);
- 
+
   const [pivotDate, setPivotDate] = useState(new Date());
+
+  usePageTitle("Mood Diary");
 
   const monthlyData = getMonthlyData(pivotDate, data);
   console.log(monthlyData);
@@ -51,7 +52,7 @@ export default function Home() {
         leftChild={<Button text={"<"} onClick={onDecreaseMonth} />}
         rightChild={<Button text={">"} onClick={onIncreaseMonth} />}
       />
-      <DiaryList data={monthlyData } />
+      <DiaryList data={monthlyData} />
     </>
   );
 }

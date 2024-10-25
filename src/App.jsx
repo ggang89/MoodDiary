@@ -109,6 +109,7 @@ function App() {
     });
   };
 
+  //로딩 중일 때
   if (isLoading) {
     return <div>데이터 중입니다....</div>
   }
